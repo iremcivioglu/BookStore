@@ -11,27 +11,25 @@ namespace WebApi.GetById
     {
         public BooksViewModel Model { get; set; }
         private readonly BookStoreDbContext _dbContext;
+        public int BookId { get; set; }
         public GetByIdQuery(BookStoreDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public List<BooksViewModel> Handle()
+        public BooksViewModel Handle()
         {
-            var bookList = _dbContext.Books.OrderBy(x => x.BookId).ToList();
+            var book = _dbContext.Books.Where(x => x.BookId == BookId).SingleOrDefault();
             //book = new Book();
-            List<BooksViewModel> vm = new List<BooksViewModel>();
-            foreach (var book in bookList)
-            {
-                vm.Add(new BooksViewModel()
-                {
-                    BookId = book.BookId,
-                    BookTitle = book.BookTitle,
-                    Genre = ((GenreEnum)book.GenreId).ToString(),
-                    PublishDate = book.PublishDate.Date.ToString("dd/MM//yyyy"),
-                    PageCount = book.PageCount,
-                });
-            }
+            BooksViewModel vm = new BooksViewModel();
+
+            vm.BookId = book.BookId;
+            vm.BookTitle = book.BookTitle;
+            vm.Genre = ((GenreEnum)book.GenreId).ToString();
+            vm.PublishDate = book.PublishDate.Date.ToString("dd/MM//yyyy");
+            vm.PageCount = book.PageCount;
+
+
             return vm;
         }
     }
